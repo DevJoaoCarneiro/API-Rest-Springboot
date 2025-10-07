@@ -9,12 +9,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "carro")
 @NoArgsConstructor
 @AllArgsConstructor

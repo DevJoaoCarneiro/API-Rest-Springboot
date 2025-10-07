@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.Entities.Carro;
 
 @Repository
-public interface IClientRepository extends JpaRepository<Carro, Long>{
+public interface ICarroRepository extends JpaRepository<Carro, Long>{
 
 }
