@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.env
+
+/target/
+
+# Arquivos de log
+*.log
+
+# Arquivos de configuração de IDEs
+/.idea/
+/.vscode/
+*.iml
+*.ipr
+*.iws
