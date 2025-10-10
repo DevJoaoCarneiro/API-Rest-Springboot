@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
-public record ClienteDTO(String nome, String email, String telefone, String endereco, String documento) {
+import jakarta.validation.constraints.NotBlank;
+
+public record ClienteDTO(@NotBlank String nome, @NotBlank String email, @NotBlank String telefone, String endereco, @NotBlank String documento) {
 
 }
