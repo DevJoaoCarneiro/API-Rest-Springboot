@@ -19,7 +19,6 @@ import lombok.Setter;
 @Table(name = "pagamento")
 @Getter
 @Setter
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pagamento {
