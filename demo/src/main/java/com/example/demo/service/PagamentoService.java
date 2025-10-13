@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.demo.Entities.Cliente;
+import com.example.demo.dto.EditaPagamentoDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -48,14 +51,35 @@ public class PagamentoService {
     }
 
     @Transactional
-    public ResponseEntity deletaPagamento(Long id){
+    public ResponseEntity deletaPagamento(Long id) {
         Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
 
-        if(pagamento.isPresent()){
-            pagamentoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+        if (!pagamentoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Pagamento não encontrado com o ID: " + id);
         }
 
-        return ResponseEntity.badRequest().build();
+        pagamentoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    public EditaPagamentoDto editaPagamento(Long id, EditaPagamentoDto editaPagamentoDTO) {
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado com o ID: " + id));
+
+
+        if (editaPagamentoDTO.valor() != null) {
+            pagamento.setValor(editaPagamentoDTO.valor());
+        }
+        if (editaPagamentoDTO.formaPagamento() != null) {
+            pagamento.setFormaPagamento(editaPagamentoDTO.formaPagamento());
+        }
+
+        Pagamento pagamentoSalvo = pagamentoRepository.save(pagamento);
+
+        return new EditaPagamentoDto(
+                pagamentoSalvo.getValor(),
+                pagamentoSalvo.getFormaPagamento()
+        );
+
     }
 }

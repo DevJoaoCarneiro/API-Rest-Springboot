@@ -16,7 +16,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
 @Entity
 @Getter
 @Setter
