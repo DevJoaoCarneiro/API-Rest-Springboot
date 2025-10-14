@@ -1,14 +1,11 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.example.demo.Entities.Cliente;
 import com.example.demo.dto.EditaPagamentoDto;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,7 @@ public class PagamentoService {
     public PagamentoDTO cadastroUser(PagamentoDTO pagamentoDTO) {
         Pagamento pagamento = new Pagamento();
         pagamento.setValor(pagamentoDTO.valor());
-        pagamento.setDataPagamento(pagamentoDTO.dataPagamento());
+        pagamento.setDataPagamento(LocalDateTime.now());
         pagamento.setFormaPagamento(pagamentoDTO.formaPagamento());
         pagamento.setStatus(pagamentoDTO.status());
         Pagamento novoPagamento = pagamentoRepository.save(pagamento);

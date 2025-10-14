@@ -52,7 +52,7 @@ public class ClienteService {
             clienteParaAtualizar.setEmail(consultaDto.email());
         }
         if (consultaDto.endereco() != null) {
-            clienteParaAtualizar.setEndereco(consultaDto.endereco()); // CORRIGIDO
+            clienteParaAtualizar.setEndereco(consultaDto.endereco());
         }
         if (consultaDto.telefone() != null) {
             clienteParaAtualizar.setTelefone(consultaDto.telefone());
