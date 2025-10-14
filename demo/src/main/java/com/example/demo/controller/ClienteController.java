@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("cliente")
+@RequestMapping("/api/cliente")
 @AllArgsConstructor
 public class ClienteController {
 
@@ -33,7 +34,7 @@ public class ClienteController {
   
 
     @PostMapping
-    public ResponseEntity<Cliente> cadastraCliente(@RequestBody ClienteDTO clienteDto) {
+    public ResponseEntity<Cliente> cadastraCliente(@RequestBody @Valid ClienteDTO clienteDto) {
         var newClient = clientService.cadastraCliente(clienteDto);
         return ResponseEntity.ok(newClient);
     }
@@ -49,7 +50,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ConsultaClienteDTO> editaCliente(@PathVariable Long id, @RequestBody ConsultaClienteDTO consultaDto){  
+    public ResponseEntity<ConsultaClienteDTO> editaCliente(@PathVariable Long id, @RequestBody @Valid ConsultaClienteDTO consultaDto){
         ConsultaClienteDTO clienteAtualizado = clientService.editaCliente(id, consultaDto);
          return ResponseEntity.ok(clienteAtualizado);
     }
