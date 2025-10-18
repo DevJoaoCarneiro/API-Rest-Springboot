@@ -5,13 +5,7 @@ import java.util.Optional;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Entities.Cliente;
 import com.example.demo.Entities.Usuario;
@@ -20,11 +14,11 @@ import com.example.demo.dto.ConsultaClienteDTO;
 import com.example.demo.repository.IClientRepository;
 import com.example.demo.service.ClienteService;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/cliente")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class ClienteController {
 
