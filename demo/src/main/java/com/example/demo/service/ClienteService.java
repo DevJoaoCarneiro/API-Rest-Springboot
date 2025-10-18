@@ -36,7 +36,7 @@ public class ClienteService {
         List<Cliente> listaCliente = clientRepository.findAll();
         return listaCliente
                 .stream()
-                .map(c -> new ConsultaClienteDTO(c.getNome(), c.getEmail(), c.getTelefone(), c.getEndereco()))
+                .map(c -> new ConsultaClienteDTO(c.getId(), c.getNome(), c.getEmail(), c.getTelefone(), c.getEndereco()))
                 .collect(Collectors.toList());
 
     }
@@ -61,16 +61,19 @@ public class ClienteService {
         Cliente clienteSalvo = clientRepository.save(clienteParaAtualizar);
 
         return new ConsultaClienteDTO(
+                clienteSalvo.getId(),
                 clienteSalvo.getNome(),
                 clienteSalvo.getEmail(),
                 clienteSalvo.getTelefone(),
-                clienteSalvo.getEndereco());
+                clienteSalvo.getEndereco()
+                );
     }
 
     public ResponseEntity<Cliente> deletaCliente(Long id) {
-        var user = clientRepository.findById(id);
-        if (user.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+        Cliente user = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        if (!user.getReservas().isEmpty()) {
+            throw new IllegalStateException("Não é possível excluir um cliente que possui reservas associadas.");
         }
 
         clientRepository.deleteById(id);

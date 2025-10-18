@@ -3,15 +3,9 @@ package com.example.demo.Entities;
 
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.example.demo.Entities.embedded.Endereco;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,8 +31,8 @@ public class Cliente {
     @Column(name = "telefone")
     private String telefone;
 
-    @Column(name = "endereco")
-    private String endereco;
+    @Embedded
+    private Endereco endereco;
 
     @Column(name = "documento", nullable = false, unique = true)
     private String documento;
