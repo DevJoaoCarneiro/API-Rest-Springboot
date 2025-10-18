@@ -1,0 +1,86 @@
+.form_container {
+    background-color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    border-radius: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.container_space {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.container_space_info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.container_space_contato {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.container_input_label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form_input {
+    padding: 0.9rem;
+    border: none;
+    background-color: var(--grey-input);
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.Button_input_select {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.style_button {
+    border: none;
+    flex: 1 1 250px;
+    max-width: 300px;
+    height: 2.2rem;
+    background-color: var(--orange-button);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    color: white;
+}
+
+.container_button_form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.form_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    width: 60%;
+    background-color: var(--blue-color);
+    color: var(--color-background);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 2%;
+    font-size: 1rem;
+}
