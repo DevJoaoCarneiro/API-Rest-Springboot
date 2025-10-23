@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
-public record ConsultaClienteDTO(String nome, String email, String telefone, String endereco) {
+import com.example.demo.Entities.embedded.Endereco;
+
+public record ConsultaClienteDTO(Long id,String nome, String email, String telefone, Endereco endereco) {
 
 }
