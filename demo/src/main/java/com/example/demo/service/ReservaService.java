@@ -3,11 +3,9 @@ package com.example.demo.service;
 import com.example.demo.Entities.Carro;
 import com.example.demo.Entities.Cliente;
 import com.example.demo.Entities.Reserva;
-import com.example.demo.Entities.embedded.Endereco;
-import com.example.demo.dto.CarroDTO;
-import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.ReservaDTO;
 import com.example.demo.dto.ReservaResponseDTO;
+import com.example.demo.mapper.ReservaMapper;
 import com.example.demo.repository.ICarroRepository;
 import com.example.demo.repository.IClientRepository;
 import com.example.demo.repository.IReservaRepository;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +30,8 @@ public class ReservaService {
     @Autowired
     private IClientRepository clientRepository;
 
+    private ReservaMapper reservaMapper;
+
     public ReservaResponseDTO cadastrarReserva(ReservaDTO reservaDTO) {
         Carro carro = carroRepository.findById(reservaDTO.carro_id())
                 .orElseThrow(() -> new IllegalArgumentException("Id do carro não encontrado"));
@@ -40,6 +39,13 @@ public class ReservaService {
         Cliente cliente = clientRepository.findById(reservaDTO.cliente_id())
                 .orElseThrow(() -> new IllegalArgumentException("Id do cliente não encontrado"));
 
+        if (!carro.getDisponivel()) {
+            throw new IllegalStateException("O carro selecionado não está disponível.");
+        }
+
+        if (reservaDTO.dataFim().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("A data de fim não pode estar no passado.");
+        }
 
         Reserva reserva = new Reserva();
         reserva.setDataInicio(LocalDateTime.now());
@@ -50,53 +56,56 @@ public class ReservaService {
 
         reservaRepository.save(reserva);
 
-        return new ReservaResponseDTO(
-                reserva.getDataInicio(),
-                reserva.getDataFim(),
-                reserva.isStatus(),
-                new ClienteDTO(
-                        cliente.getNome(),
-                        cliente.getEmail(),
-                        cliente.getTelefone(),
-                        cliente.getEndereco(),
-                        cliente.getDocumento()
-                ),
-                new CarroDTO(
-                        carro.getModelo(),
-                        carro.getMarca(),
-                        carro.getAno(),
-                        carro.getPlaca(),
-                        carro.getPrecoDiaria()
-                )
-        );
-
+        return reservaMapper.toDTO(reserva);
     }
 
     public List<ReservaResponseDTO> consultaReserva() {
-        List<Reserva> reserva = reservaRepository.findAll();
+        return reservaMapper.toListDTO(reservaRepository.findAll());
+    }
 
-        return reserva
-                .stream()
-                .map(c -> new ReservaResponseDTO(
-                        c.getDataInicio(),
-                        c.getDataFim(),
-                        c.isStatus(),
-                        new ClienteDTO(
-                                c.getCliente().getNome(),
-                                c.getCliente().getEmail(),
-                                c.getCliente().getTelefone(),
-                                c.getCliente().getEndereco(),
-                                c.getCliente().getDocumento()
-                        ),
-                        new CarroDTO(
-                                c.getCarro().getModelo(),
-                                c.getCarro().getMarca(),
-                                c.getCarro().getAno(),
-                                c.getCarro().getPlaca(),
-                                c.getCarro().getPrecoDiaria()
-                        )
-                ))
-                .collect(Collectors.toList());
+    public ReservaResponseDTO consultaReservaPorId(Long id){
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Reserva não encontrada"));
+        return reservaMapper.toDTO(reserva);
+    }
+
+    public ResponseEntity deletaReserva(Long id){
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Reserva não encontrada"));
+
+        if(reserva.isStatus()){
+            throw new IllegalArgumentException("Você não pode excluir uma reserva que está ativa");
+        }
+
+        if(reserva.getCarro().getDisponivel()){
+            throw new IllegalArgumentException("Não é possível excluir uma reserva enquanto o carro não estiver disponível");
+        }
+
+        reservaRepository.delete(reserva);
+        return ResponseEntity.ok("Reserva excluída com sucesso");
+    }
+
+    public ReservaResponseDTO editaReserva(Long id, ReservaDTO reservaDTO){
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Reserva não encontrada"));
+
+        if(reservaDTO.dataFim() != null){
+            reserva.setDataFim(reservaDTO.dataFim());
+        }
+
+        if(reservaDTO.cliente_id() != null){
+            Cliente cliente = clientRepository.findById(reservaDTO.cliente_id())
+                    .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
+            reserva.setCliente(cliente);
+        }
+
+        if(reservaDTO.carro_id() != null){
+            Carro carro = carroRepository.findById(reservaDTO.carro_id())
+                            .orElseThrow(() -> new IllegalArgumentException("Carro não encontrado"));
+            reserva.setCarro(carro);
+        }
+
+        return reservaMapper.toDTO(reservaRepository.save(reserva));
     }
 }
 
