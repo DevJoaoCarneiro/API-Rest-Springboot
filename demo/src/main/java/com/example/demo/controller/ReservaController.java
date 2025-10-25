@@ -19,14 +19,29 @@ public class ReservaController {
     private ReservaService reservaService;
 
     @PostMapping
-    public ResponseEntity<ReservaResponseDTO> cadastraReserva(@RequestBody ReservaDTO reservaDTO){
+    public ResponseEntity<ReservaResponseDTO> cadastraReserva(@RequestBody ReservaDTO reservaDTO) {
         reservaService.cadastrarReserva(reservaDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.cadastrarReserva(reservaDTO));
     }
 
     @GetMapping
-    public List<ReservaResponseDTO> consultaReserva(){
+    public List<ReservaResponseDTO> consultaReserva() {
         return reservaService.consultaReserva();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservaResponseDTO> consultaReservaPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.consultaReservaPorId(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteReservaPorId(@PathVariable Long id) {
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ReservaResponseDTO> editaReserva(@PathVariable Long id, @RequestBody ReservaDTO reservaDTO){
+        return ResponseEntity.ok().body(reservaService.editaReserva(id, reservaDTO));
     }
 }
