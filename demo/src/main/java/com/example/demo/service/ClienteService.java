@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.demo.mapper.ClienteMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,25 +21,15 @@ import lombok.AllArgsConstructor;
 public class ClienteService {
     private IClientRepository clientRepository;
 
+    private ClienteMapper clientMapper;
+
     public Cliente cadastraCliente(ClienteDTO clienteDTO) {
-        Cliente cliente = new Cliente();
-
-        cliente.setNome(clienteDTO.nome());
-        cliente.setEmail(clienteDTO.email());
-        cliente.setTelefone(clienteDTO.telefone());
-        cliente.setEndereco(clienteDTO.endereco());
-        cliente.setDocumento(clienteDTO.documento());
-
+        Cliente cliente = clientMapper.toEntity(clienteDTO);
         return clientRepository.save(cliente);
     }
 
     public List<ConsultaClienteDTO> consultaCliente() {
-        List<Cliente> listaCliente = clientRepository.findAll();
-        return listaCliente
-                .stream()
-                .map(c -> new ConsultaClienteDTO(c.getId(), c.getNome(), c.getEmail(), c.getTelefone(), c.getEndereco()))
-                .collect(Collectors.toList());
-
+        return clientMapper.toDTOList(clientRepository.findAll());
     }
 
     public ConsultaClienteDTO editaCliente(Long id, ConsultaClienteDTO consultaDto) {
