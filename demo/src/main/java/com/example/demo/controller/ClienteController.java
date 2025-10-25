@@ -25,7 +25,6 @@ public class ClienteController {
     private ClienteService clientService;
     private IClientRepository clientRepository;
 
-  
 
     @PostMapping
     public ResponseEntity<Cliente> cadastraCliente(@RequestBody @Valid ClienteDTO clienteDto) {
@@ -35,18 +34,18 @@ public class ClienteController {
 
     @GetMapping
     public List<ConsultaClienteDTO> consultaCliente() {
-         return clientService.consultaCliente();
+        return clientService.consultaCliente();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> consultaClientePorId(@PathVariable Long id){
-        return clientService.buscaClientePorId(id);  
+    public ResponseEntity<Cliente> consultaClientePorId(@PathVariable Long id) {
+        return clientService.buscaClientePorId(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ConsultaClienteDTO> editaCliente(@PathVariable Long id, @RequestBody @Valid ConsultaClienteDTO consultaDto){
+    public ResponseEntity<ConsultaClienteDTO> editaCliente(@PathVariable Long id, @RequestBody @Valid ConsultaClienteDTO consultaDto) {
         ConsultaClienteDTO clienteAtualizado = clientService.editaCliente(id, consultaDto);
-         return ResponseEntity.ok(clienteAtualizado);
+        return ResponseEntity.ok(clienteAtualizado);
     }
 
     @DeleteMapping("/{id}")

@@ -26,13 +26,13 @@ public class Reserva {
     private LocalDateTime dataFim;
 
     @Column(name = "status", nullable = false) 
-    private String status;
+    private boolean status;
 
-    @ManyToOne(fetch = FetchType.LAZY) 
+    @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "carro_id", nullable = false)
     private Carro carro;
 
