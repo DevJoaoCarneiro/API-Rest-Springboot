@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -36,4 +37,7 @@ public class Manutencao {
 
     @Column(nullable = false)
     private String status;
+
+    @OneToOne(mappedBy = "manutencao")
+    private Pagamento pagamento;
 }

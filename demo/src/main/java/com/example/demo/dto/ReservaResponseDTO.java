@@ -6,7 +6,7 @@ public record ReservaResponseDTO(
     LocalDateTime dataInicio,
     LocalDateTime dataFim,
     boolean status,
-    ClienteDTO clienteDTO,
-    CarroDTO carroDTO
+    ClienteDTO cliente,
+    CarroDTO carro
 ) {
 }
