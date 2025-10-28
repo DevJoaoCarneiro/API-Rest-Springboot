@@ -2,12 +2,17 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.demo.Entities.*;
+import com.example.demo.dto.EditaPagamentoDto;
 import com.example.demo.dto.PagamentoResponseDTO;
 import com.example.demo.mapper.PagamentoMapper;
 import com.example.demo.repository.*;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.PagamentoDTO;
@@ -67,7 +72,7 @@ public class PagamentoService {
     public List<PagamentoResponseDTO> consultarPagamento() {
         return pagamentoMapper.toListDTO(pagamentoRepository.findAll());
     }
-/*
+
     @Transactional
     public ResponseEntity deletaPagamento(Long id) {
         Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
@@ -101,5 +106,5 @@ public class PagamentoService {
 
     }
 
-     */
+
 }
