@@ -10,8 +10,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ReservaMapper {
 
-    @Mapping(source = "cliente", target = "clienteDTO")
-    @Mapping(source = "carro", target = "carroDTO")
+    @Mapping(source = "cliente", target = "cliente")
+    @Mapping(source = "carro", target = "carro")
     ReservaResponseDTO toDTO(Reserva reserva);
 
     List<ReservaResponseDTO> toListDTO(List<Reserva> reservas);
