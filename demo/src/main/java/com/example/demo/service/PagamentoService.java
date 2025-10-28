@@ -2,19 +2,17 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import com.example.demo.dto.EditaPagamentoDto;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.ResponseEntity;
+
+import com.example.demo.Entities.*;
+import com.example.demo.dto.PagamentoResponseDTO;
+import com.example.demo.mapper.PagamentoMapper;
+import com.example.demo.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Entities.Pagamento;
 import com.example.demo.dto.PagamentoDTO;
-import com.example.demo.repository.IPagamentoRepository;
 
 import lombok.AllArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -22,31 +20,54 @@ public class PagamentoService {
 
     private IPagamentoRepository pagamentoRepository;
 
-    public PagamentoDTO cadastroUser(PagamentoDTO pagamentoDTO) {
+    @Autowired
+    private IManutencaoRepository manutencaoRepository;
+
+    @Autowired
+    private IReservaRepository reservaRepository;
+
+    private PagamentoMapper pagamentoMapper;
+
+    public PagamentoResponseDTO cadastroPagamento(PagamentoDTO pagamentoDTO) {
+
+        boolean temReserva = pagamentoDTO.reserva_id() != null;
+        boolean temManutencao = pagamentoDTO.manutencao_id() != null;
+
+        if (temReserva && temManutencao) {
+            throw new IllegalArgumentException("Informe apenas uma referência: reserva OU manutenção.");
+        }
+
+        if (!temReserva && !temManutencao) {
+            throw new IllegalArgumentException("É necessário informar uma reserva ou manutenção.");
+        }
+
+
         Pagamento pagamento = new Pagamento();
         pagamento.setValor(pagamentoDTO.valor());
         pagamento.setDataPagamento(LocalDateTime.now());
         pagamento.setFormaPagamento(pagamentoDTO.formaPagamento());
-        pagamento.setStatus(pagamentoDTO.status());
-        Pagamento novoPagamento = pagamentoRepository.save(pagamento);
+        pagamento.setStatus(true);
 
-        return new PagamentoDTO(
-                novoPagamento.getValor(),
-                novoPagamento.getDataPagamento(),
-                novoPagamento.getFormaPagamento(),
-                novoPagamento.getStatus()
-        );
+        if (temReserva) {
+            Reserva reserva = reservaRepository.findById(pagamentoDTO.reserva_id())
+                    .orElseThrow(() -> new IllegalArgumentException("Reserva não encontrada"));
+            pagamento.setTipoPagamento("Reserva");
+            pagamento.setReserva(reserva);
+        } else {
+            Manutencao manutencao = manutencaoRepository.findById(pagamentoDTO.manutencao_id())
+                    .orElseThrow(() -> new IllegalArgumentException("Manutenção não encontrada"));
+            pagamento.setTipoPagamento("Manutencao");
+            pagamento.setManutencao(manutencao);
+        }
+
+        return pagamentoMapper.toDTO(pagamentoRepository.save(pagamento));
     }
 
-    public List<PagamentoDTO> consultarPagamento() {
-        List<Pagamento> listaPagamento = pagamentoRepository.findAll();
 
-        return listaPagamento
-                .stream()
-                .map(c -> new PagamentoDTO(c.getValor(), c.getDataPagamento(), c.getFormaPagamento(), c.getStatus()))
-                .collect(Collectors.toList());
+    public List<PagamentoResponseDTO> consultarPagamento() {
+        return pagamentoMapper.toListDTO(pagamentoRepository.findAll());
     }
-
+/*
     @Transactional
     public ResponseEntity deletaPagamento(Long id) {
         Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
@@ -79,4 +100,6 @@ public class PagamentoService {
         );
 
     }
+
+     */
 }

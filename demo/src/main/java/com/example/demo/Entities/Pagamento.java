@@ -3,12 +3,7 @@ package com.example.demo.Entities;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -34,8 +29,21 @@ public class Pagamento {
     private LocalDateTime dataPagamento;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    private boolean status;
 
     @Column(name = "formaPagamento", nullable = false)
     private String formaPagamento;
+
+    @Column(name = "tipoPagamento", nullable = false)
+    private String tipoPagamento;
+
+    @OneToOne
+    @JoinColumn(name = "manutencao_id")
+    private Manutencao manutencao;
+
+    @OneToOne
+    @JoinColumn(name = "reserva_id")
+    private Reserva reserva;
+
+
 }

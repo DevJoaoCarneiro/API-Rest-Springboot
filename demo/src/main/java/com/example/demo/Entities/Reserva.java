@@ -29,11 +29,14 @@ public class Reserva {
     private boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "carro_id", nullable = false)
+    @JoinColumn(name = "carro_id")
     private Carro carro;
+
+    @OneToOne(mappedBy = "reserva")
+    private Pagamento pagamento;
 
 }
