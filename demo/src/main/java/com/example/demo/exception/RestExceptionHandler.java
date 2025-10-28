@@ -37,7 +37,7 @@ public class RestExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Erro Interno no Servidor",
-                "Ocorreu um erro inesperado no sistema.",
+                ex.getMessage(),
                 request.getRequestURI()
         );
 ;

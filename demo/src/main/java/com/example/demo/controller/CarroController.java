@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CarroDTO;
+import com.example.demo.dto.CarroResponseDTO;
 import com.example.demo.service.CarroService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class CarroController {
 
 
     @GetMapping
-    public ResponseEntity<List<CarroDTO>> consultaTodosCarros(){
+    public ResponseEntity<List<CarroResponseDTO>> consultaTodosCarros(){
         try {
             return ResponseEntity.ok().body(carroService.consultarTodosOsCarros());
         }catch (Exception e){
@@ -32,7 +33,7 @@ public class CarroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CarroDTO> consultaCarroPorId(@PathVariable Long id){
+    public ResponseEntity<CarroResponseDTO> consultaCarroPorId(@PathVariable Long id){
         try {
             return ResponseEntity.ok().body(carroService.consultaCarroPorId(id));
         }catch (Exception e){

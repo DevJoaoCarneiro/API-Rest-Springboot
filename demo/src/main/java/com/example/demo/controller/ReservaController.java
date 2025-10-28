@@ -20,7 +20,6 @@ public class ReservaController {
 
     @PostMapping
     public ResponseEntity<ReservaResponseDTO> cadastraReserva(@RequestBody ReservaDTO reservaDTO) {
-        reservaService.cadastrarReserva(reservaDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.cadastrarReserva(reservaDTO));
     }
