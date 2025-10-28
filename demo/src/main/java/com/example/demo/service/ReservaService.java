@@ -47,12 +47,14 @@ public class ReservaService {
             throw new IllegalArgumentException("A data de fim não pode estar no passado.");
         }
 
+
         Reserva reserva = new Reserva();
         reserva.setDataInicio(LocalDateTime.now());
         reserva.setDataFim(reservaDTO.dataFim());
         reserva.setStatus(true);
         reserva.setCarro(carro);
         reserva.setCliente(cliente);
+        carro.setDisponivel(false);
 
         reservaRepository.save(reserva);
 
