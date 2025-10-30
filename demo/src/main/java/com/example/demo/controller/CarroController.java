@@ -3,13 +3,16 @@ package com.example.demo.controller;
 import com.example.demo.dto.CarroDTO;
 import com.example.demo.dto.CarroResponseDTO;
 import com.example.demo.service.CarroService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Carro", description = "Endpoints para gerenciamento de carros")
 @RestController
 @RequestMapping("/api/carro")
 @AllArgsConstructor
@@ -25,20 +28,19 @@ public class CarroController {
 
     @GetMapping
     public ResponseEntity<List<CarroResponseDTO>> consultaTodosCarros(){
-        try {
             return ResponseEntity.ok().body(carroService.consultarTodosOsCarros());
-        }catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
+
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CarroResponseDTO> consultaCarroPorId(@PathVariable Long id){
-        try {
             return ResponseEntity.ok().body(carroService.consultaCarroPorId(id));
-        }catch (Exception e){
-            return ResponseEntity.notFound().build();
-        }
+
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<List<CarroDTO>> listaTodosOsCarroDisponiveis(){
+        return ResponseEntity.ok().body(carroService.filtraCarroPorReservas());
     }
 
     @DeleteMapping("/{id}")
@@ -49,10 +51,6 @@ public class CarroController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CarroDTO> editaCarroPorId(@PathVariable Long id, @RequestBody CarroDTO carroDto){
-        try{
             return ResponseEntity.ok().body(carroService.editaCarroPorId(id,carroDto));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
     }
 }

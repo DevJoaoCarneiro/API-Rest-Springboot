@@ -79,6 +79,17 @@ public class CarroService {
 
     }
 
+    public List<CarroDTO> filtraCarroPorReservas(){
+        List<Carro> carro = carroRepository.findByDisponivelTrueOrderByIdAsc();
+
+        if(carro.isEmpty()){
+            throw new IllegalArgumentException("Não tem carros disponiveis para filtrar as reservas");
+        }
+
+        return carroMapper.toDTOList(carro);
+
+    }
+
     public void deletaCarroPorId(Long id) {
         Carro carro = carroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Carro com id " + id + "não encontrado"));
@@ -86,13 +97,17 @@ public class CarroService {
         if (!carro.getReservas().isEmpty()) {
             throw new IllegalStateException("Não é possível excluir um cliente que possui reservas associadas.");
         }
-        
+
         carroRepository.deleteById(id);
     }
 
     public CarroDTO editaCarroPorId(Long id, CarroDTO carroDto) {
         Carro carro = carroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Carro com id " + id + "não encontrado"));
+
+        if (!carro.getDisponivel()) {
+            throw new IllegalStateException("Não é possível editar um carro que está reservado ou em manutenção.");
+        }
 
         if (carroDto.modelo() != null) {
             carro.setModelo(carroDto.modelo());

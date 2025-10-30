@@ -87,24 +87,17 @@ public class ReservaService {
         return ResponseEntity.ok("Reserva excluída com sucesso");
     }
 
-    public ReservaResponseDTO editaReserva(Long id, ReservaDTO reservaDTO){
+    public ReservaResponseDTO atualizaReservaPorId(Long id){
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("Reserva não encontrada"));
 
-        if(reservaDTO.dataFim() != null){
-            reserva.setDataFim(reservaDTO.dataFim());
-        }
 
-        if(reservaDTO.cliente_id() != null){
-            Cliente cliente = clientRepository.findById(reservaDTO.cliente_id())
-                    .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
-            reserva.setCliente(cliente);
-        }
-
-        if(reservaDTO.carro_id() != null){
-            Carro carro = carroRepository.findById(reservaDTO.carro_id())
-                            .orElseThrow(() -> new IllegalArgumentException("Carro não encontrado"));
-            reserva.setCarro(carro);
+        if(reserva.isStatus()){
+            reserva.getCarro().setDisponivel(false);
+            reserva.setStatus(true);
+        }else{
+            reserva.getCarro().setDisponivel(true);
+            reserva.setStatus(false);
         }
 
         return reservaMapper.toDTO(reservaRepository.save(reserva));

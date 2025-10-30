@@ -8,4 +8,7 @@ import com.example.demo.Entities.Pagamento;
 @Repository
 public interface IPagamentoRepository extends JpaRepository<Pagamento, Long> {
 
+    boolean existsByReservaId(Long reservaId);
+
+    boolean existsByManutencaoId(Long manutencaoId);
 }

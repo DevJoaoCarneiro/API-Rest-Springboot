@@ -1,14 +1,13 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Entities.Cliente;
-import com.example.demo.Entities.Usuario;
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.ConsultaClienteDTO;
 import com.example.demo.repository.IClientRepository;
@@ -16,6 +15,7 @@ import com.example.demo.service.ClienteService;
 
 import lombok.AllArgsConstructor;
 
+@Tag(name = "Cliente", description = "Endpoints para gerenciamento de clientes")
 @RestController
 @RequestMapping("/api/cliente")
 @CrossOrigin(origins = "http://localhost:5173")
