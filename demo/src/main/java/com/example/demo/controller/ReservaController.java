@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.Entities.Reserva;
+
 import com.example.demo.dto.ReservaDTO;
 import com.example.demo.dto.ReservaResponseDTO;
 import com.example.demo.service.ReservaService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Reserva", description = "Endpoints para gerenciamento de reservas")
 @RestController
 @RequestMapping("/api/reserva")
 @AllArgsConstructor
@@ -36,11 +38,12 @@ public class ReservaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteReservaPorId(@PathVariable Long id) {
+        reservaService.deletaReserva(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ReservaResponseDTO> editaReserva(@PathVariable Long id, @RequestBody ReservaDTO reservaDTO){
-        return ResponseEntity.ok().body(reservaService.editaReserva(id, reservaDTO));
+    @PatchMapping("/{id}")
+    public ResponseEntity<ReservaResponseDTO> atualizaStatusDaReserva(@PathVariable Long id){
+        return ResponseEntity.ok().body(reservaService.atualizaReservaPorId(id));
     }
 }

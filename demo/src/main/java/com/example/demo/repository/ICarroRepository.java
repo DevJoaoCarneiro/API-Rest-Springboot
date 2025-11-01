@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface ICarroRepository extends JpaRepository<Carro, Long>{
     List<Carro> findAllByOrderByIdAsc();
+
+    List<Carro> findByDisponivelTrueOrderByIdAsc();
 }

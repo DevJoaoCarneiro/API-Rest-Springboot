@@ -5,8 +5,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -17,15 +19,55 @@ public class RestExceptionHandler {
             EntityNotFoundException ex,
             HttpServletRequest request
     ) {
-        ApiErrorResponseDTO errorResponse = new ApiErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                "Recurso Não Encontrado",
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                "Recurso não encontrado",
                 ex.getMessage(),
                 request.getRequestURI()
         );
+    }
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponseDTO> handleIllegalArgument(
+            IllegalArgumentException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Requisição inválida",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiErrorResponseDTO> handleIllegalState(
+            IllegalStateException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                "Conflito de estado",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponseDTO> handleValidationError(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
+        String errorMessage = ex.getBindingResult().getFieldError() != null
+                ? ex.getBindingResult().getFieldError().getDefaultMessage()
+                : "Erro de validação nos campos enviados";
+
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Erro de validação",
+                errorMessage,
+                request.getRequestURI()
+        );
     }
 
     @ExceptionHandler(Exception.class)
@@ -33,15 +75,27 @@ public class RestExceptionHandler {
             Exception ex,
             HttpServletRequest request
     ) {
-        ApiErrorResponseDTO errorResponse = new ApiErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Erro Interno no Servidor",
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Erro interno no servidor",
                 ex.getMessage(),
                 request.getRequestURI()
         );
-;
+    }
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    private ResponseEntity<ApiErrorResponseDTO> buildErrorResponse(
+            HttpStatus status,
+            String error,
+            String message,
+            String path
+    ) {
+        ApiErrorResponseDTO errorResponse = new ApiErrorResponseDTO(
+                LocalDateTime.now(),
+                status.value(),
+                error,
+                message,
+                path
+        );
+        return new ResponseEntity<>(errorResponse, status);
     }
 }

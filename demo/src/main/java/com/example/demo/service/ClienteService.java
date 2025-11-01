@@ -1,8 +1,6 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.example.demo.mapper.ClienteMapper;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +60,7 @@ public class ClienteService {
 
     public ResponseEntity<Cliente> deletaCliente(Long id) {
         Cliente user = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
         if (!user.getReservas().isEmpty()) {
             throw new IllegalStateException("Não é possível excluir um cliente que possui reservas associadas.");
         }

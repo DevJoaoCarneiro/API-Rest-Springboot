@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.Entities.*;
+import com.example.demo.Entities.embedded.Status;
 import com.example.demo.dto.EditaPagamentoDto;
 import com.example.demo.dto.PagamentoResponseDTO;
 import com.example.demo.mapper.PagamentoMapper;
@@ -12,6 +13,7 @@ import com.example.demo.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -46,12 +48,19 @@ public class PagamentoService {
             throw new IllegalArgumentException("É necessário informar uma reserva ou manutenção.");
         }
 
+        if (temReserva && pagamentoRepository.existsByReservaId(pagamentoDTO.reserva_id())) {
+            throw new IllegalStateException("Essa reserva já possui um pagamento ativo registrado.");
+        }
+
+        if (temManutencao && pagamentoRepository.existsByManutencaoId(pagamentoDTO.manutencao_id())) {
+            throw new IllegalStateException("Essa manutenção já possui um pagamento ativo registrado.");
+        }
+
 
         Pagamento pagamento = new Pagamento();
         pagamento.setValor(pagamentoDTO.valor());
         pagamento.setDataPagamento(LocalDateTime.now());
         pagamento.setFormaPagamento(pagamentoDTO.formaPagamento());
-        pagamento.setStatus(true);
 
         if (temReserva) {
             Reserva reserva = reservaRepository.findById(pagamentoDTO.reserva_id())
@@ -65,6 +74,7 @@ public class PagamentoService {
             pagamento.setManutencao(manutencao);
         }
 
+        pagamento.setStatus(Status.PENDENTE);
         return pagamentoMapper.toDTO(pagamentoRepository.save(pagamento));
     }
 
@@ -81,7 +91,13 @@ public class PagamentoService {
             throw new EntityNotFoundException("Pagamento não encontrado com o ID: " + id);
         }
 
-        pagamentoRepository.deleteById(id);
+        try {
+            pagamentoRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    "Não é possível excluir o pagamento devido a vínculos de integridade no banco de dados.", e);
+        }
+
         return ResponseEntity.noContent().build();
     }
 
@@ -103,6 +119,30 @@ public class PagamentoService {
                 pagamentoSalvo.getValor(),
                 pagamentoSalvo.getFormaPagamento()
         );
+
+    }
+
+    public PagamentoResponseDTO atualizaStatusDoPagamento(Long id, Status novoStatus){
+        Pagamento pagamento = pagamentoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pagamento não encontrado"));
+
+        Status statusAtual = pagamento.getStatus();
+
+        if (statusAtual == Status.CANCELADO) {
+            throw new IllegalStateException("Pagamentos cancelados não podem ser alterados.");
+        }
+
+        if (statusAtual == Status.PAGO && novoStatus != Status.PAGO) {
+            throw new IllegalStateException("Pagamentos já pagos não podem ser modificados.");
+        }
+
+        if (statusAtual == novoStatus) {
+            throw new IllegalStateException("O pagamento já está com o status " + novoStatus + ".");
+        }
+
+        pagamento.setStatus(novoStatus);
+
+        return pagamentoMapper.toDTO(pagamentoRepository.save(pagamento));
 
     }
 

@@ -3,12 +3,14 @@ package com.example.demo.Entities;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.example.demo.Entities.embedded.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "pagamento")
@@ -28,8 +30,9 @@ public class Pagamento {
     @Column(name = "dataPagamento", nullable = false)
     private LocalDateTime dataPagamento;
 
-    @Column(name = "status", nullable = false)
-    private boolean status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status;
 
     @Column(name = "formaPagamento", nullable = false)
     private String formaPagamento;
