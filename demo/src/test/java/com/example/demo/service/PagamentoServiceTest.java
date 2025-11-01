@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.Entities.Manutencao;
 import com.example.demo.Entities.Pagamento;
 import com.example.demo.Entities.Reserva;
+import com.example.demo.Entities.embedded.Status;
 import com.example.demo.dto.PagamentoDTO;
 import com.example.demo.dto.PagamentoResponseDTO;
 import com.example.demo.mapper.PagamentoMapper;
@@ -54,7 +55,7 @@ class PagamentoServiceTest {
         pagamento.setId(10L);
         pagamento.setValor(BigDecimal.valueOf(500));
         pagamento.setFormaPagamento("PIX");
-        pagamento.setStatus(true);
+        pagamento.setStatus(Status.PAGO);
 
         pagamentoReservaDTO = new PagamentoDTO(
                 null,
