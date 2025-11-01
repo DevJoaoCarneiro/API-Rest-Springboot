@@ -9,9 +9,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "manutencoes")
 @Getter
 @Setter
-@Table(name = "manutencoes")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Manutencao {
