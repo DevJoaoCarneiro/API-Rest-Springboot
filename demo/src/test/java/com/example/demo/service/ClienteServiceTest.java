@@ -5,6 +5,7 @@ import com.example.demo.Entities.Reserva;
 import com.example.demo.Entities.embedded.Endereco;
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.ConsultaClienteDTO;
+import com.example.demo.dto.PatchClienteDTO;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.repository.IClientRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -51,6 +52,15 @@ class ClienteServiceTest {
         var endereco = new Endereco("Rua A", "87000-000", "Centro", "10", "PR");
         return new ConsultaClienteDTO(1L, "João", "joao@email.com", "4499999999", endereco);
     }
+    private Endereco criarEndereco() {
+        return new Endereco(
+                "Rua A",
+                "87000-000",
+                "Centro",
+                "10",
+                "PR"
+        );
+    }
 
 
     @Nested
@@ -60,18 +70,25 @@ class ClienteServiceTest {
         @Test
         @DisplayName("Deve cadastrar um cliente com sucesso")
         void deveCadastrarClienteComSucesso() {
+
+            // Arrange
             var clienteDTO = criarClienteDTO();
             var cliente = criarCliente();
 
             when(clienteMapper.toEntity(clienteDTO)).thenReturn(cliente);
             when(clientRepository.save(any())).thenReturn(cliente);
+            when(clienteMapper.toDTO(cliente)).thenReturn(clienteDTO);
 
+            // Act
             var result = clienteService.cadastraCliente(clienteDTO);
 
+            // Assert
             assertNotNull(result);
-            assertEquals(cliente.getNome(), result.getNome());
+            assertEquals(clienteDTO.nome(), result.nome());
+            assertEquals(clienteDTO.email(), result.email());
+
             verify(clientRepository).save(clienteCaptor.capture());
-            assertEquals(cliente.getNome(), clienteCaptor.getValue().getNome());
+            assertEquals("João", clienteCaptor.getValue().getNome());
         }
 
         @Test
@@ -125,27 +142,41 @@ class ClienteServiceTest {
         @Test
         @DisplayName("Deve editar cliente com sucesso")
         void deveEditarClienteComSucesso() {
+
             var cliente = criarCliente();
-            var atualizacao = new ConsultaClienteDTO(1L, "João Atualizado", null, null, null);
+
+            var atualizacao = new PatchClienteDTO(
+                    "João Atualizado",
+                    "joao_atualizado@email.com",
+                    "44988887777",
+                    criarEndereco()
+            );
+
             when(clientRepository.findById(1L)).thenReturn(Optional.of(cliente));
             when(clientRepository.save(any())).thenReturn(cliente);
 
             var result = clienteService.editaCliente(1L, atualizacao);
 
             assertNotNull(result);
+            assertEquals("João Atualizado", result.nome());
+            assertEquals("joao_atualizado@email.com", result.email());
+            assertEquals("44988887777", result.telefone());
+
             verify(clientRepository).save(any());
         }
 
         @Test
         @DisplayName("Deve lançar exceção ao editar cliente inexistente")
         void deveLancarExcecaoAoEditarClienteInexistente() {
+
             when(clientRepository.findById(99L)).thenReturn(Optional.empty());
 
-            var dto = criarConsultaDTO();
-            assertThrows(EntityNotFoundException.class, () -> clienteService.editaCliente(99L, dto));
+            var dto = new PatchClienteDTO(null, null, null, null);
+
+            assertThrows(EntityNotFoundException.class,
+                    () -> clienteService.editaCliente(99L, dto));
         }
     }
-
     @Nested
     @DisplayName("Deletar cliente")
     class DeletarCliente {
@@ -154,7 +185,7 @@ class ClienteServiceTest {
         @DisplayName("Deve deletar cliente com sucesso")
         void deveDeletarClienteComSucesso() {
             var cliente = criarCliente();
-            cliente.setReservas(List.of()); // sem reservas
+            cliente.setReservas(List.of());
             when(clientRepository.findById(1L)).thenReturn(Optional.of(cliente));
 
             var result = clienteService.deletaCliente(1L);

@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import com.example.demo.dto.PatchClienteDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +29,8 @@ public class ClienteController {
 
 
     @PostMapping
-    public ResponseEntity<Cliente> cadastraCliente(@RequestBody @Valid ClienteDTO clienteDto) {
-        var newClient = clientService.cadastraCliente(clienteDto);
-        return ResponseEntity.ok(newClient);
+    public ResponseEntity<ClienteDTO> cadastraCliente(@RequestBody @Valid ClienteDTO clienteDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(clientService.cadastraCliente(clienteDto));
     }
 
     @GetMapping
@@ -42,14 +43,17 @@ public class ClienteController {
         return clientService.buscaClientePorId(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ConsultaClienteDTO> editaCliente(@PathVariable Long id, @RequestBody @Valid ConsultaClienteDTO consultaDto) {
-        ConsultaClienteDTO clienteAtualizado = clientService.editaCliente(id, consultaDto);
+    @PatchMapping("/{id}")
+    public ResponseEntity<ConsultaClienteDTO> atualizaParcialmente(
+            @PathVariable Long id,
+            @RequestBody PatchClienteDTO patchDTO
+    ) {
+        ConsultaClienteDTO clienteAtualizado = clientService.editaCliente(id, patchDTO);
         return ResponseEntity.ok(clienteAtualizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Cliente> deletaCliente(@PathVariable Long id) {
+    public ResponseEntity<Void> deletaCliente(@PathVariable Long id) {
         clientService.deletaCliente(id);
         return ResponseEntity.noContent().build();
     }
