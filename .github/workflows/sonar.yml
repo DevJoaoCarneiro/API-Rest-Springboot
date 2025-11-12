@@ -1,30 +1,26 @@
-name: SonarQube
+name: SonarQubeCloud
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build, Test (H2) and SonarCloud
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: 21
+          distribution: temurin
 
       - name: Cache SonarQube packages
         uses: actions/cache@v4
@@ -40,13 +36,19 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build and analyze
+      - name: Build & run tests with H2 (gera Jacoco)
+        working-directory: ./demo
+        env:
+          SPRING_PROFILES_ACTIVE: test
+        run: mvn -B clean verify
+
+      - name: SonarCloud Analysis (usa o jacoco gerado)
         working-directory: ./demo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B clean verify -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=DevJoaoCarneiro_API-Rest-Springboot \
             -Dsonar.organization=devjoaocarneiro \
             -Dsonar.host.url=https://sonarcloud.io \
