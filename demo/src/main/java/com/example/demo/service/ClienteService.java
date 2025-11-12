@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import com.example.demo.dto.PatchClienteDTO;
 import com.example.demo.mapper.ClienteMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,30 +22,30 @@ public class ClienteService {
 
     private ClienteMapper clientMapper;
 
-    public Cliente cadastraCliente(ClienteDTO clienteDTO) {
+    public ClienteDTO cadastraCliente(ClienteDTO clienteDTO) {
         Cliente cliente = clientMapper.toEntity(clienteDTO);
-        return clientRepository.save(cliente);
+        return clientMapper.toDTO(clientRepository.save(cliente));
     }
 
     public List<ConsultaClienteDTO> consultaCliente() {
         return clientMapper.toDTOList(clientRepository.findAll());
     }
 
-    public ConsultaClienteDTO editaCliente(Long id, ConsultaClienteDTO consultaDto) {
+    public ConsultaClienteDTO editaCliente(Long id, PatchClienteDTO clienteDTO) {
         Cliente clienteParaAtualizar = clientRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com o ID: " + id));
 
-        if (consultaDto.nome() != null) {
-            clienteParaAtualizar.setNome(consultaDto.nome());
+        if (clienteDTO.nome() != null) {
+            clienteParaAtualizar.setNome(clienteDTO.nome());
         }
-        if (consultaDto.email() != null) {
-            clienteParaAtualizar.setEmail(consultaDto.email());
+        if (clienteDTO.email() != null) {
+            clienteParaAtualizar.setEmail(clienteDTO.email());
         }
-        if (consultaDto.endereco() != null) {
-            clienteParaAtualizar.setEndereco(consultaDto.endereco());
+        if (clienteDTO.endereco() != null) {
+            clienteParaAtualizar.setEndereco(clienteDTO.endereco());
         }
-        if (consultaDto.telefone() != null) {
-            clienteParaAtualizar.setTelefone(consultaDto.telefone());
+        if (clienteDTO.telefone() != null) {
+            clienteParaAtualizar.setTelefone(clienteDTO.telefone());
         }
 
         Cliente clienteSalvo = clientRepository.save(clienteParaAtualizar);
@@ -58,7 +59,7 @@ public class ClienteService {
                 );
     }
 
-    public ResponseEntity<Cliente> deletaCliente(Long id) {
+    public ResponseEntity<Void> deletaCliente(Long id) {
         Cliente user = clientRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
         if (!user.getReservas().isEmpty()) {
