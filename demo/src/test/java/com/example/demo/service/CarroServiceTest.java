@@ -4,8 +4,6 @@ import com.example.demo.Entities.Carro;
 import com.example.demo.Entities.Cliente;
 import com.example.demo.Entities.Reserva;
 import com.example.demo.dto.CarroDTO;
-import com.example.demo.dto.CarroResponseDTO;
-import com.example.demo.dto.ReservaDTO;
 import com.example.demo.mapper.CarroMapper;
 import com.example.demo.repository.ICarroRepository;
 import com.example.demo.repository.IReservaRepository;
