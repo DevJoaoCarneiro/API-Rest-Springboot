@@ -46,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B clean verify -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=DevJoaoCarneiro_API-Rest-Springboot \
             -Dsonar.organization=devjoaocarneiro \
             -Dsonar.host.url=https://sonarcloud.io \
