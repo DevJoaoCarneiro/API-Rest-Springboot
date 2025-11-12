@@ -92,12 +92,12 @@ public class ReservaService {
                 .orElseThrow(()-> new IllegalArgumentException("Reserva não encontrada"));
 
 
-        if(reserva.isStatus()){
-            reserva.getCarro().setDisponivel(false);
-            reserva.setStatus(true);
-        }else{
+        if (reserva.isStatus()) {
             reserva.getCarro().setDisponivel(true);
             reserva.setStatus(false);
+        } else {
+            reserva.getCarro().setDisponivel(false);
+            reserva.setStatus(true);
         }
 
         return reservaMapper.toDTO(reservaRepository.save(reserva));
