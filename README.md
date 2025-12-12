@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DevJoaoCarneiro_API-Rest-Springboot&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DevJoaoCarneiro_API-Rest-Springboot)
+
 # 🚗 Sistema de Locação de Carros — **ClienteMovCar**
 
 Aplicação completa (**frontend + backend**) para gerenciamento de uma **locadora de veículos**, permitindo o cadastro de clientes, controle de carros disponíveis, registro de reservas, manutenções e pagamentos.  
